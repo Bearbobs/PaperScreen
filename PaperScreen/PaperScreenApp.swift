@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 @main
 struct PaperScreenApp: App {
@@ -6,6 +7,7 @@ struct PaperScreenApp: App {
     @StateObject private var controller: PaperOverlayController
 
     init() {
+        NSApplication.shared.setActivationPolicy(.accessory)
         let settings = PaperSettings()
 
         _settings = StateObject(wrappedValue: settings)
@@ -15,7 +17,7 @@ struct PaperScreenApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("Paper", systemImage: "doc.text") {
+        MenuBarExtra("PaperScreen", systemImage: "display")  {
             Toggle("Enabled", isOn: $controller.enabled)
             Divider()
             Button("Settings") {
