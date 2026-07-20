@@ -2,8 +2,26 @@ import AppKit
 import Combine
 
 final class PaperOverlayController: ObservableObject {
+    
+    private func updateVisibility() {
 
-    @Published var enabled = true
+        for window in windows.values {
+
+            if enabled {
+                window.orderFrontRegardless()
+            } else {
+                window.orderOut(nil)
+            }
+
+        }
+
+    }
+
+    @Published var enabled = true {
+        didSet {
+            updateVisibility()
+        }
+    }
 
     private let settings: PaperSettings
     private var windows: [String: PaperOverlayWindow] = [:]
@@ -36,6 +54,7 @@ final class PaperOverlayController: ObservableObject {
             w.orderFront(nil)
             windows["\(screen.hash)"] = w
         }
+        updateVisibility()
     }
 
     func setOpacity(_ value: CGFloat) {
