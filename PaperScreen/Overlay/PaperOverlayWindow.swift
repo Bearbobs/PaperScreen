@@ -30,6 +30,14 @@ final class PaperOverlayWindow: NSWindow {
         noiseLayer.contents = image
     }
 
+    func configure(with texture: PaperTexture, opacity: CGFloat) {
+        let settings = texture.settings
+        tintLayer.backgroundColor = settings.tint.withAlphaComponent(0.14).cgColor
+        tintLayer.opacity = Float(settings.opacity)
+        noiseLayer.compositingFilter = settings.blendMode
+        noiseLayer.opacity = Float(opacity)
+    }
+
     func setOpacity(_ value: CGFloat) {
         noiseLayer.opacity = Float(value)
     }
