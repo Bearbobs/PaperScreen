@@ -7,12 +7,10 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Text("Opacity")
-            Slider(value: Binding(
-                get: { settings.opacity },
-                set: {
-                    settings.opacity = $0
-                    controller.setOpacity(CGFloat($0))
-                }), in: 0.05...0.4)
+            Slider(
+                value: $settings.opacity,
+                in: 0.05...0.4
+            )
         }
         .padding()
     }
