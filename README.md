@@ -1,4 +1,4 @@
-# PaperScreen
+<img width="3360" height="2100" alt="Screenshot 2026-07-21 at 12 15 41 PM" src="https://github.com/user-attachments/assets/d86fd06b-65f9-4e45-ba24-b2a9b8873115" /># PaperScreen
  
 A lightweight macOS utility that overlays a soft, procedurally generated paper texture across your screen — softening contrast and glare without tinting your colors like a blue-light filter.
  
@@ -17,6 +17,12 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 - Open the downloaded DMG file,Drag PaperScreen.app into your Applications folder.
 - Launch PaperScreen from Applications.
 - The app will appear in your macOS menu bar.
+
+## Screenshots
+
+<img width="1141" height="769" alt="Screenshot 2026-07-21 at 12 18 29 PM" src="https://github.com/user-attachments/assets/ee8db84d-2971-4198-991d-d6108d2ba2fe" />
+<img width="1680" height="1050" alt="Screenshot 2026-07-21 at 3 15 48 PM" src="https://github.com/user-attachments/assets/5594388a-8a90-4a7c-8227-4ab49731483f" />
+
 
 ## How It Works
  
