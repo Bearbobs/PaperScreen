@@ -22,8 +22,11 @@ struct PaperScreenApp: App {
             VStack {
                 // Header
                 HStack {
-                    Image(systemName: "sparkles.rectangle.stack")
-                        .font(.title2)
+                    Image("MenuBarIcon")
+                        .renderingMode(.template)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 22, height: 22)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text("PaperScreen")
@@ -103,9 +106,9 @@ struct PaperScreenApp: App {
             .padding(8)
 
         } label: {
-            Image(systemName: controller.enabled
-                  ? "sparkles.rectangle.stack.fill"
-                  : "sparkles.rectangle.stack")
+            Image("MenuBarIcon")
+                .renderingMode(.template)
+                .opacity(controller.enabled ? 1.0 : 0.4)
         }
         .menuBarExtraStyle(.window)
     }
