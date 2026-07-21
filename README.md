@@ -10,6 +10,14 @@ Runs invisibly above every app, click-through, on every display, and stays out o
  
 - macOS 11.0+
 
+## Download & Installation
+
+- Download the latest PaperScreen.dmg from the Releases page:
+    https://github.com/Bearbobs/PaperScreen/releases
+- Open the downloaded DMG file,Drag PaperScreen.app into your Applications folder.
+- Launch PaperScreen from Applications.
+- The app will appear in your macOS menu bar.
+
 ## How It Works
  
 1. **Overlay window** — a borderless, transparent  is created per screen at the highest window level.
