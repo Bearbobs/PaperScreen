@@ -9,11 +9,12 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 ## Requirements
  
 - macOS 11.0+
-- Xcode 15+
 
 ## How It Works
  
-1. **Overlay window** — a borderless, transparent `NSWindow` is created per screen at the highest window level, with `ignoresMouseEvents = true` and `.canJoinAllSpaces`, so it floats above everything without stealing focus or input.
-2. **Texture generation** — Core Image's random noise generator is blurred and level-adjusted to produce an organic grain (the direct equivalent of SVG's `feTurbulence`), rendered once per texture preset.
-3. **Compositing** — the noise layer is applied with a `.multiply` blend mode at low opacity, which darkens highlights and reduces perceived contrast without shifting hue — the effect of a physical matte screen protector, in software.
+1. **Overlay window** — a borderless, transparent  is created per screen at the highest window level.
+2. **Texture generation** — Core Image's random noise generator is blurred and level-adjusted to produce an organic grain.
+3. **Compositing** — the noise layer is applied, which darkens highlights and reduces perceived contrast without shifting hue — the effect of a physical matte screen protector, in software.
+
+
 
