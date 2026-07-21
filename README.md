@@ -24,5 +24,14 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 2. **Texture generation** — Core Image's random noise generator is blurred and level-adjusted to produce an organic grain.
 3. **Compositing** — the noise layer is applied, which darkens highlights and reduces perceived contrast without shifting hue — the effect of a physical matte screen protector, in software.
 
+## Contributing
+
+Feel free to:
+
+- Open an issue for bug reports, feature requests, improvements, or suggestions.
+- Share ideas for new textures, customization options, or usability improvements.
+- Submit a pull request with fixes or new features.
+
+Every suggestion and contribution helps make PaperScreen better.
 
 
