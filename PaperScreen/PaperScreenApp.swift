@@ -8,6 +8,7 @@ struct PaperScreenApp: App {
 
     init() {
         NSApplication.shared.setActivationPolicy(.accessory)
+
         let settings = PaperSettings()
 
         _settings = StateObject(wrappedValue: settings)
@@ -17,14 +18,95 @@ struct PaperScreenApp: App {
     }
 
     var body: some Scene {
-        MenuBarExtra("PaperScreen", systemImage: "display")  {
-            Toggle("Enabled", isOn: $controller.enabled)
-            Divider()
-            Button("Settings") {
-                SettingsWindow.shared.show(settings: settings, controller: controller)
+        MenuBarExtra {
+            VStack {
+                // Header
+                HStack {
+                    Image(systemName: "sparkles.rectangle.stack")
+                        .font(.title2)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("PaperScreen")
+                            .font(.headline)
+
+                        Text(controller.enabled ? "Active" : "Paused")
+                            .font(.caption)
+                            .foregroundStyle(
+                                controller.enabled ? .green : .secondary
+                            )
+                    }
+
+                    Spacer()
+                }
+                .padding(.bottom, 8)
+
+                Divider()
+                Label(
+                    controller.enabled ? "Paper Mode On" : "Paper Mode Off",
+                    systemImage: controller.enabled
+                        ? "checkmark.circle.fill"
+                        : "circle"
+                ).padding()
+                
+                
+                // Quick info
+                VStack(alignment: .leading, spacing: 6) {
+                    Label {
+                        Text("Opacity \(Int(settings.opacity * 100))%")
+                    } icon: {
+                        Image(systemName: "circle.lefthalf.filled")
+                    }
+
+                    Label {
+                        Text(settings.texture.rawValue.capitalized)
+                    } icon: {
+                        Image(systemName: "square.3.layers.3d")
+                    }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+                Divider()
+
+                
+                Button {
+                    controller.enabled.toggle()
+                } label: {
+                    Label(
+                        controller.enabled ? "Disable PaperScreen" : "Enable PaperScreen",
+                        systemImage: "power"
+                    )
+                }
+
+                Divider()
+
+                // Actions
+                Button {
+                    SettingsWindow.shared.show(
+                        settings: settings,
+                        controller: controller
+                    )
+                } label: {
+                    Label("Settings…", systemImage: "slider.horizontal.3")
+                }
+                .keyboardShortcut(",")
+
+                Divider()
+
+                Button {
+                    NSApplication.shared.terminate(nil)
+                } label: {
+                    Label("Quit PaperScreen", systemImage: "power.circle")
+                }
+                .keyboardShortcut("q")
             }
-            Divider()
-            Button("Quit") { NSApplication.shared.terminate(nil) }
+            .padding(8)
+
+        } label: {
+            Image(systemName: controller.enabled
+                  ? "sparkles.rectangle.stack.fill"
+                  : "sparkles.rectangle.stack")
         }
+        .menuBarExtraStyle(.window)
     }
 }

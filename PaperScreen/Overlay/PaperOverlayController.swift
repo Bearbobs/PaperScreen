@@ -59,6 +59,7 @@ final class PaperOverlayController: ObservableObject {
 
         rebuild()
     }
+    
 
     func rebuild() {
         windows.removeAll()
