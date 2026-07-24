@@ -18,6 +18,26 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 - Launch PaperScreen from Applications.
 - The app will appear in your macOS menu bar.
 
++## Opening the App (Unsigned Build)
++
++PaperScreen isn't notarized or signed with an Apple Developer certificate, so macOS Gatekeeper will block it on first launch with a message like *"PaperScreen.app" is damaged and can't be opened* or *can't be opened because Apple cannot check it for malicious software*. This is expected for an open-source, self-distributed app — here's how to open it anyway:
++
++**Option 1: System Settings**
++1. Try to open PaperScreen normally (double-click) — it will be blocked.
++2. Go to **System Settings → Privacy & Security**.
++3. Scroll down to the Security section, where you'll see a message about PaperScreen being blocked.
++4. Click **Open Anyway**.
++5. Confirm by clicking **Open Anyway** again if prompted.
++
++**Option 2: Terminal (if the above shows "damaged" instead of a security prompt)**
++This happens because macOS strips the quarantine flag differently depending on how the DMG was downloaded. Run:
++```bash
++xattr -cr /Applications/PaperScreen.app
++```
++Then launch PaperScreen normally.
++
++> **Why this happens:** Apple requires a paid Developer ID ($99/year) to notarize apps for smooth Gatekeeper approval. As a free, open-source project, PaperScreen doesn't currently use one. You can always verify what you're running by checking the source in this repo or building it yourself with Xcode.
+
 ## Screenshots
 
 <img width="1141" height="769" alt="Screenshot 2026-07-21 at 12 18 29 PM" src="https://github.com/user-attachments/assets/ee8db84d-2971-4198-991d-d6108d2ba2fe" />
