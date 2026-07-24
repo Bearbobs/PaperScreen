@@ -3,9 +3,9 @@ import AppKit
 
 enum PaperTexture: String, CaseIterable, Identifiable {
 
-    case classicMatte
-    case whisperWeave
-    case sunbakedParchment
+    case matte
+    case linen
+    case parchment
     case oldBook
     case recycledPaper
     case cottonFiber
@@ -23,14 +23,14 @@ enum PaperTexture: String, CaseIterable, Identifiable {
 
         switch self {
 
-        case .classicMatte:
-            return "Classic Matte"
+        case .matte:
+            return "Matte"
 
-        case .whisperWeave:
-            return "Whisper Weave"
+        case .linen:
+            return "Linen"
 
-        case .sunbakedParchment:
-            return "Sunbaked Parchment"
+        case .parchment:
+            return "Parchment"
 
         case .oldBook:
             return "Old Book"
@@ -68,7 +68,7 @@ enum PaperTexture: String, CaseIterable, Identifiable {
         switch self {
 
 
-        case .classicMatte:
+        case .matte:
 
             return (
                 1.0,
@@ -84,7 +84,7 @@ enum PaperTexture: String, CaseIterable, Identifiable {
 
 
 
-        case .whisperWeave:
+        case .linen:
 
             return (
                 2.0,
@@ -100,7 +100,7 @@ enum PaperTexture: String, CaseIterable, Identifiable {
 
 
 
-        case .sunbakedParchment:
+        case .parchment:
 
             return (
                 1.2,

@@ -1,6 +1,6 @@
 # PaperScreen
  
-A lightweight macOS utility that overlays a soft, procedurally generated paper texture across your screen — softening contrast and glare without tinting your colors like a blue-light filter.
+A lightweight macOS utility that adds a subtle grain overlay across your screen to take the edge off harsh, glossy displays. It works on contrast and texture rather than color temperature, so your whites stay white.
  
 Runs invisibly above every app, click-through, on every display, and stays out of your way.
 
