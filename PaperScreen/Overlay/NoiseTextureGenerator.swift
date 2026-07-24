@@ -6,7 +6,7 @@ final class NoiseTextureGenerator {
     private let context = CIContext()
 
     func generateTile(size: Int = 1024) -> CGImage? {
-        generateTile(for: .classicMatte, size: size)
+        generateTile(for: .matte, size: size)
     }
 
     func generateTile(for texture: PaperTexture, size: Int = 1024) -> CGImage? {
