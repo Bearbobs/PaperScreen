@@ -1,4 +1,4 @@
-PaperScreen
+# PaperScreen
  
 A lightweight macOS utility that adds a subtle grain overlay across your screen to take the edge off harsh, glossy displays. It works on contrast and texture rather than color temperature, so your whites stay white.
  
