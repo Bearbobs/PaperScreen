@@ -8,7 +8,7 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 
 ## Requirements
  
-- macOS 11.0+
+- macOS 15.0+
 
 ## Download & Installation
 
@@ -39,14 +39,15 @@ Then launch PaperScreen normally.
 > **Why this happens:** Apple requires a paid Developer ID ($99/year) to notarize apps for smooth Gatekeeper approval. As a free, open-source project, PaperScreen doesn't currently use one. You can always verify what you're running by checking the source in this repo or building it yourself with Xcode.
 
 ## Screenshots
-
+- Note: Try PaperScreen locally to replicate the real feel of the app.
+  
 <img width="1141" height="769" alt="Screenshot 2026-07-21 at 12 18 29 PM" src="https://github.com/user-attachments/assets/ee8db84d-2971-4198-991d-d6108d2ba2fe" />
 <img width="1680" height="1050" alt="Screenshot 2026-07-21 at 3 15 48 PM" src="https://github.com/user-attachments/assets/5594388a-8a90-4a7c-8227-4ab49731483f" />
 
 
 ## How It Works
  
-1. **Overlay window** — a borderless, transparent  is created per screen at the highest window level.
+1. **Overlay window** — a borderless, transparent window is created per screen at the highest window level.
 2. **Texture generation** — Core Image's random noise generator is blurred and level-adjusted to produce an organic grain.
 3. **Compositing** — the noise layer is applied, which darkens highlights and reduces perceived contrast without shifting hue — the effect of a physical matte screen protector, in software.
 
