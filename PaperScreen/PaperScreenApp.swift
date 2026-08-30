@@ -9,7 +9,16 @@ struct PaperScreenApp: App {
     init() {
         NSApplication.shared.setActivationPolicy(.accessory)
 
-        let settings = PaperSettings()
+        let defaults = UserDefaults.standard
+
+        let settings = PaperSettings(
+            opacity: defaults.object(forKey: "opacity") as? Double ?? 0.12,
+            warmth: defaults.object(forKey: "warmth") as? Double ?? 0.10,
+            texture: PaperTexture(rawValue: defaults.string(forKey: "texture") ?? PaperTexture.matte.rawValue) ?? .matte,
+            grainSize: defaults.object(forKey: "grainSize") as? Double ?? 1.0,
+            textureSharpness: defaults.object(forKey: "textureSharpness") as? Double ?? 1.0,
+            excludedBundleIdentifiers: Set(defaults.stringArray(forKey: "excludedBundleIdentifiers") ?? [])
+        )
 
         _settings = StateObject(wrappedValue: settings)
         _controller = StateObject(

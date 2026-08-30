@@ -7,27 +7,60 @@ struct SettingsView: View {
     var body: some View {
         VStack(spacing: 0) {
             Form {
-                Picker(
-                    "Paper Type",
-                    selection: $settings.texture
-                ) {
-                    ForEach(PaperTexture.allCases) { texture in
-                        Text(texture.displayName)
-                            .tag(texture)
+                Section(header: Text("Paper Style")) {
+                    Picker(
+                        "Paper Type",
+                        selection: $settings.texture
+                    ) {
+                        ForEach(PaperTexture.allCases) { texture in
+                            Text(texture.displayName)
+                                .tag(texture)
+                        }
+                    }
+                    .pickerStyle(.menu)
+
+                    HStack {
+                        Text("Opacity")
+                        Slider(
+                            value: $settings.opacity,
+                            in: 0.05...0.4
+                        )
+                    }
+
+                    HStack {
+                        Text("Grain Size")
+                        Slider(
+                            value: $settings.grainSize,
+                            in: 0.5...2.0
+                        )
+                    }
+
+                    HStack {
+                        Text("Sharpness")
+                        Slider(
+                            value: $settings.textureSharpness,
+                            in: 0.5...2.0
+                        )
                     }
                 }
-                .pickerStyle(.menu)
-                .padding()
-                Section {
-                    Text("Opacity")
-                    Slider(
-                        value: $settings.opacity,
-                        in: 0.05...0.4
+
+            }
+            .padding(.top,24)
+            .padding(.horizontal, 10)
+            
+            Section() {
+                HStack {
+                    Text("Per-App Option")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    AppPickerView(
+                        excludedBundleIdentifiers: $settings.excludedBundleIdentifiers
                     )
                 }
             }
             .padding()
-
+            
+            
             Spacer(minLength: 0)
 
             Link(destination: URL(string: "https://github.com/Bearbobs")!) {
@@ -38,7 +71,7 @@ struct SettingsView: View {
                 .font(.footnote)
                 .foregroundColor(.secondary)
             }
-            .padding(.bottom, 12)
+            .padding(.bottom, 24)
         }
     }
 }

@@ -6,21 +6,23 @@ final class NoiseTextureGenerator {
     private let context = CIContext()
 
     func generateTile(size: Int = 1024) -> CGImage? {
-        generateTile(for: .matte, size: size)
+        generateTile(for: .matte, grainSize: 1.0, textureSharpness: 1.0, size: size)
     }
 
-    func generateTile(for texture: PaperTexture, size: Int = 1024) -> CGImage? {
+    func generateTile(for texture: PaperTexture, grainSize: Double, textureSharpness: Double, size: Int = 1024) -> CGImage? {
         let random = CIFilter.randomGenerator()
         guard let image = random.outputImage else { return nil }
 
         let settings = texture.settings
+        let effectiveScale = settings.grainScale * CGFloat(grainSize)
         let scaledImage = image.transformed(
-            by: CGAffineTransform(scaleX: settings.grainScale, y: settings.grainScale)
+            by: CGAffineTransform(scaleX: effectiveScale, y: effectiveScale)
         )
 
         let blurFilter = CIFilter.gaussianBlur()
         blurFilter.inputImage = scaledImage
-        blurFilter.radius = Float(settings.blurRadius)
+        let effectiveBlur = settings.blurRadius / CGFloat(textureSharpness)
+        blurFilter.radius = Float(effectiveBlur)
 
         let contrastFilter = CIFilter.colorControls()
         contrastFilter.inputImage = blurFilter.outputImage
