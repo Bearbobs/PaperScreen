@@ -104,12 +104,25 @@ final class PaperOverlayController: ObservableObject {
             }
             .store(in: &cancellables)
 
+        // Rebuild overlay windows when display configuration changes
+        NotificationCenter.default.publisher(for: NSApplication.didChangeScreenParametersNotification)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.rebuild()
+            }
+            .store(in: &cancellables)
+
         rebuild()
     }
     
 
     func rebuild() {
+        windows.values.forEach { window in
+            window.orderOut(nil)
+            window.close()
+        }
         windows.removeAll()
+
         let texture = settings.texture
         let tile = generator.generateTile(for: texture, grainSize: settings.grainSize, textureSharpness: settings.textureSharpness)
         for screen in NSScreen.screens {

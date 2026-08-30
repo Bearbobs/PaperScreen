@@ -5,9 +5,26 @@ struct AppPickerView: View {
     @Binding var excludedBundleIdentifiers: Set<String>
 
     @State private var installedApps: [AppInfo] = []
+    @State private var manualBundleIdentifier = ""
+
+    private var installedAppsByBundleIdentifier: [String: AppInfo] {
+        Dictionary(uniqueKeysWithValues: installedApps.map { ($0.bundleIdentifier, $0) })
+    }
+
+    private var resolvedExcludedApps: [AppInfo] {
+        excludedBundleIdentifiers
+            .compactMap { installedAppsByBundleIdentifier[$0] }
+            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
+    private var unresolvedExcludedBundleIdentifiers: [String] {
+        excludedBundleIdentifiers
+            .filter { installedAppsByBundleIdentifier[$0] == nil }
+            .sorted()
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text("Disable overlay for apps:")
                 .font(.subheadline)
 
@@ -15,22 +32,27 @@ struct AppPickerView: View {
                 Text("No apps excluded.")
                     .foregroundColor(.secondary)
             } else {
-                ForEach(installedApps.filter { excludedBundleIdentifiers.contains($0.bundleIdentifier) }) { app in
-                    HStack {
-                        if let icon = app.icon {
-                            Image(nsImage: icon)
-                                .resizable()
-                                .frame(width: 16, height: 16)
-                                .cornerRadius(3)
-                        }
-                        Text(app.name)
-                        Spacer()
-                        Button(role: .destructive) {
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(resolvedExcludedApps) { app in
+                        excludedAppRow(
+                            name: app.name,
+                            bundleIdentifier: app.bundleIdentifier,
+                            icon: app.icon,
+                            isUnavailable: false
+                        ) {
                             excludedBundleIdentifiers.remove(app.bundleIdentifier)
-                        } label: {
-                            Image(systemName: "minus.circle")
                         }
-                        .buttonStyle(.plain)
+                    }
+
+                    ForEach(unresolvedExcludedBundleIdentifiers, id: \.self) { bundleIdentifier in
+                        excludedAppRow(
+                            name: "Unavailable App",
+                            bundleIdentifier: bundleIdentifier,
+                            icon: nil,
+                            isUnavailable: true
+                        ) {
+                            excludedBundleIdentifiers.remove(bundleIdentifier)
+                        }
                     }
                 }
             }
@@ -43,7 +65,7 @@ struct AppPickerView: View {
                 Spacer()
 
                 Menu {
-                    ForEach(installedApps.sorted { $0.name < $1.name }) { app in
+                    ForEach(installedApps.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }) { app in
                         Button {
                             excludedBundleIdentifiers.insert(app.bundleIdentifier)
                         } label: {
@@ -76,26 +98,114 @@ struct AppPickerView: View {
                     }
                 }
             }
+
+            HStack(spacing: 8) {
+                TextField("Or enter bundle ID", text: $manualBundleIdentifier)
+                    .textFieldStyle(.roundedBorder)
+
+                Button("Add") {
+                    addManualBundleIdentifier()
+                }
+                .disabled(trimmedManualBundleIdentifier.isEmpty)
+            }
+
+            if !unresolvedExcludedBundleIdentifiers.isEmpty {
+                Text("Unavailable apps are still excluded and can be removed by bundle ID.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
         .onAppear(perform: loadInstalledApps)
     }
 
+    private var trimmedManualBundleIdentifier: String {
+        manualBundleIdentifier.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func addManualBundleIdentifier() {
+        let bundleIdentifier = trimmedManualBundleIdentifier
+        guard !bundleIdentifier.isEmpty else { return }
+        excludedBundleIdentifiers.insert(bundleIdentifier)
+        manualBundleIdentifier = ""
+    }
+
+    @ViewBuilder
+    private func excludedAppRow(
+        name: String,
+        bundleIdentifier: String,
+        icon: NSImage?,
+        isUnavailable: Bool,
+        removeAction: @escaping () -> Void
+    ) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Group {
+                if let icon {
+                    Image(nsImage: icon)
+                        .resizable()
+                } else {
+                    Image(systemName: isUnavailable ? "app.slash" : "app")
+                        .resizable()
+                        .scaledToFit()
+                        .padding(2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .frame(width: 16, height: 16)
+            .cornerRadius(3)
+
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 6) {
+                    Text(name)
+                    if isUnavailable {
+                        Text("Not found")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Text(bundleIdentifier)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .textSelection(.enabled)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+            }
+
+            Spacer()
+
+            Button(role: .destructive, action: removeAction) {
+                Image(systemName: "minus.circle")
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
     private func loadInstalledApps() {
-        var apps: [AppInfo] = []
+        var appsByBundleIdentifier: [String: AppInfo] = [:]
         let fileManager = FileManager.default
         let appDirectories = ["/Applications", NSHomeDirectory() + "/Applications"]
 
         for dir in appDirectories {
-            guard let contents = try? fileManager.contentsOfDirectory(atPath: dir) else { continue }
-            for item in contents where item.hasSuffix(".app") {
-                let url = URL(fileURLWithPath: dir).appendingPathComponent(item)
+            guard let enumerator = fileManager.enumerator(
+                at: URL(fileURLWithPath: dir),
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: [.skipsHiddenFiles]
+            ) else {
+                continue
+            }
+
+            for case let url as URL in enumerator {
+                guard url.pathExtension == "app" else { continue }
                 if let appInfo = AppInfo(url: url) {
-                    apps.append(appInfo)
+                    appsByBundleIdentifier[appInfo.bundleIdentifier] = appInfo
                 }
+                enumerator.skipDescendants()
             }
         }
 
-        installedApps = Array(Set(apps)).sorted { $0.name < $1.name }
+        installedApps = appsByBundleIdentifier.values.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+        }
     }
 }
 
