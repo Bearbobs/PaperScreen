@@ -6,7 +6,7 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=CS7H4YVYFX2HA)
 
-### PaperScreen is soon coming to your Phones and iPads with support for browser, reader and much more - [Stay in the loop](https://forms.gle/auLn5H8iNUayqMwN6)
+### PaperScreen is soon coming to your Phones and iPads with browser, reader and more - [Stay in the loop](https://forms.gle/auLn5H8iNUayqMwN6)
 
 
 <p align="center">
