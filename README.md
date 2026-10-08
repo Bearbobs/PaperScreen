@@ -12,7 +12,7 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 <p align="center">
   <img src="https://github.com/user-attachments/assets/8c503a81-5193-4003-939d-97ef3169ca12" width="33%" />
   <img src="https://github.com/user-attachments/assets/36d6773b-f0d7-4706-b1cd-de7969c01325" width="33%" />
-  <img src="https://github.com/user-attachments/assets/fa75a3ca-c58f-455d-83e4-a96393c7eaea" width="34%" />
+  <img src="https://github.com/user-attachments/assets/fa75a3ca-c58f-455d-83e4-a96393c7eaea" width="33%" />
 </p>
 
 ## Requirements
