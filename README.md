@@ -6,11 +6,14 @@ Runs invisibly above every app, click-through, on every display, and stays out o
 
 [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=CS7H4YVYFX2HA)
 
-### PaperScreen is soon coming to your Phones and iPads - [![Stay in the loop]](https://forms.gle/auLn5H8iNUayqMwN6)
-<img width="1170" height="2532" alt="IMG_3415" src="https://github.com/user-attachments/assets/8c503a81-5193-4003-939d-97ef3169ca12" />
-<img width="1170" height="2532" alt="IMG_3416" src="https://github.com/user-attachments/assets/36d6773b-f0d7-4706-b1cd-de7969c01325" />
-<img width="1170" height="2532" alt="IMG_3417" src="https://github.com/user-attachments/assets/fa75a3ca-c58f-455d-83e4-a96393c7eaea" />
+### PaperScreen is soon coming to your Phones and iPads - [[Stay in the loop]](https://forms.gle/auLn5H8iNUayqMwN6)
 
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8c503a81-5193-4003-939d-97ef3169ca12" width="33%" />
+  <img src="https://github.com/user-attachments/assets/36d6773b-f0d7-4706-b1cd-de7969c01325" width="33%" />
+  <img src="https://github.com/user-attachments/assets/fa75a3ca-c58f-455d-83e4-a96393c7eaea" width="34%" />
+</p>
 
 ## Requirements
  
