@@ -7,7 +7,48 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                GroupBox("Paper Style") {
+                GroupBox("Color Effects") {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Picker("Add-on Mode", selection: $settings.mode) {
+                            ForEach(PaperDisplayMode.allCases) { mode in
+                                Text(mode.displayName)
+                                    .tag(mode)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+
+                        Text(settings.mode.explanation)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.top, 4)
+                }
+
+                if settings.mode == .softLight {
+                    GroupBox("Soft Light") {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Picker("Scene", selection: $settings.softLightScene) {
+                                ForEach(SoftLightScene.allCases) { scene in
+                                    Text(scene.displayName)
+                                        .tag(scene)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+
+                            settingSlider(
+                                title: "Intensity",
+                                valueText: "\(Int(settings.softLightIntensity * 100))%",
+                                value: $settings.softLightIntensity,
+                                range: 0...1
+                            )
+                        }
+                        .padding(.top, 4)
+                    }
+                }
+                
+                GroupBox("Overlay Texture") {
                     VStack(alignment: .leading, spacing: 12) {
                         Picker("Paper Type", selection: $settings.texture) {
                             ForEach(PaperTexture.allCases) { texture in
