@@ -48,7 +48,7 @@ Then launch PaperScreen normally.
 ## How It Works
  
 1. **Overlay window** — a borderless, transparent window is created per screen at the highest window level.
-2. **Texture generation** — Core Image's random noise generator is blurred and level-adjusted to produce an organic grain.
+2. **Texture generation** — Core Image's random noise generator is blurred and level-adjusted to produce an organic grain. The texture repeats at a fixed size in macOS points and renders at each display's backing scale, keeping grain size consistent across screen resolutions and Retina/non-Retina displays.
 3. **Compositing** — the noise layer is applied, which darkens highlights and reduces perceived contrast without shifting hue — the effect of a physical matte screen protector, in software.
 
 ## Contributing
