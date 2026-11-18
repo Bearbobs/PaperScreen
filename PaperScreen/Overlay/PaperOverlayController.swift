@@ -19,13 +19,22 @@ final class PaperOverlayController: ObservableObject {
         }
     }
     
-    func setTexture(_ texture: PaperTexture) {
-        let tile = generator.generateTile(for: texture, grainSize: settings.grainSize, textureSharpness: settings.textureSharpness)
+    private func makeTile() -> CGImage? {
+        return generator.generateTile(
+            for: settings.texture,
+            grainSize: settings.grainSize,
+            textureSharpness: settings.textureSharpness
+        )
+    }
 
-        windows.values.forEach { window in
-            window.setTexture(tile)
-            window.configure(with: texture, opacity: CGFloat(settings.opacity))
-        }
+    private func updateAppearance() {
+        windows.values.forEach { $0.configure(with: settings) }
+    }
+
+    private func updateTexture() {
+        let tile = makeTile()
+        windows.values.forEach { $0.setTexture(tile) }
+        updateAppearance()
     }
 
     @Published var enabled = true {
@@ -36,16 +45,6 @@ final class PaperOverlayController: ObservableObject {
 
     private let settings: PaperSettings
     
-    private static func saveSettings(_ settings: PaperSettings?) {
-        guard let settings else { return }
-        let defaults = UserDefaults.standard
-        defaults.set(settings.opacity, forKey: "opacity")
-        defaults.set(settings.warmth, forKey: "warmth")
-        defaults.set(settings.texture.rawValue, forKey: "texture")
-        defaults.set(settings.grainSize, forKey: "grainSize")
-        defaults.set(settings.textureSharpness, forKey: "textureSharpness")
-        defaults.set(Array(settings.excludedBundleIdentifiers), forKey: "excludedBundleIdentifiers")
-    }
     private var windows: [String: PaperOverlayWindow] = [:]
     private let generator = NoiseTextureGenerator()
     private var cancellables = Set<AnyCancellable>()
@@ -53,46 +52,39 @@ final class PaperOverlayController: ObservableObject {
     init(settings: PaperSettings) {
         self.settings = settings
 
-        settings.$opacity
-            .sink { [weak self] value in
-                self?.windows.values.forEach {
-                    $0.setOpacity(CGFloat(value))
-                }
-                Self.saveSettings(self?.settings)
-            }
-            .store(in: &cancellables)
-        
-        settings.$texture
-            .receive(on: RunLoop.main)
-            .sink { [weak self] texture in
-                self?.setTexture(texture)
-                Self.saveSettings(self?.settings)
-            }
-            .store(in: &cancellables)
+        Publishers.Merge3(
+            settings.$texture.dropFirst().map { _ in () },
+            settings.$grainSize.dropFirst().map { _ in () },
+            settings.$textureSharpness.dropFirst().map { _ in () }
+        )
+        .receive(on: RunLoop.main)
+        .sink { [weak self] in
+            guard let self else { return }
+            self.updateTexture()
+            self.settings.save()
+        }
+        .store(in: &cancellables)
 
-        settings.$grainSize
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                guard let self else { return }
-                self.setTexture(self.settings.texture)
-                Self.saveSettings(self.settings)
-            }
-            .store(in: &cancellables)
+        Publishers.Merge4(
+            settings.$mode.dropFirst().map { _ in () },
+            settings.$opacity.dropFirst().map { _ in () },
+            settings.$softLightScene.dropFirst().map { _ in () },
+            settings.$softLightIntensity.dropFirst().map { _ in () }
+        )
+        .merge(with: settings.$colorEPaperStyle.dropFirst().map { _ in () })
+        .receive(on: RunLoop.main)
+        .sink { [weak self] in
+            guard let self else { return }
+            self.updateAppearance()
+            self.settings.save()
+        }
+        .store(in: &cancellables)
 
-        settings.$textureSharpness
-            .receive(on: RunLoop.main)
-            .sink { [weak self] _ in
-                guard let self else { return }
-                self.setTexture(self.settings.texture)
-                Self.saveSettings(self.settings)
-            }
-            .store(in: &cancellables)
-
-        settings.$excludedBundleIdentifiers
+        settings.$excludedBundleIdentifiers.dropFirst()
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in
                 self?.updateVisibility()
-                Self.saveSettings(self?.settings)
+                self?.settings.save()
             }
             .store(in: &cancellables)
 
@@ -123,22 +115,18 @@ final class PaperOverlayController: ObservableObject {
         }
         windows.removeAll()
 
-        let texture = settings.texture
-        let tile = generator.generateTile(for: texture, grainSize: settings.grainSize, textureSharpness: settings.textureSharpness)
+        let tile = makeTile()
         for screen in NSScreen.screens {
             let w = PaperOverlayWindow(
                 screen: screen,
                 opacity: CGFloat(settings.opacity)
             )
             w.setTexture(tile)
-            w.configure(with: texture, opacity: CGFloat(settings.opacity))
+            w.configure(with: settings)
             w.orderFront(nil)
             windows["\(screen.hash)"] = w
         }
         updateVisibility()
     }
 
-    func setOpacity(_ value: CGFloat) {
-        windows.values.forEach { $0.setOpacity(value) }
-    }
 }

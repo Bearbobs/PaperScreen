@@ -9,16 +9,7 @@ struct PaperScreenApp: App {
     init() {
         NSApplication.shared.setActivationPolicy(.accessory)
 
-        let defaults = UserDefaults.standard
-
-        let settings = PaperSettings(
-            opacity: defaults.object(forKey: "opacity") as? Double ?? 0.12,
-            warmth: defaults.object(forKey: "warmth") as? Double ?? 0.10,
-            texture: PaperTexture(rawValue: defaults.string(forKey: "texture") ?? PaperTexture.matte.rawValue) ?? .matte,
-            grainSize: defaults.object(forKey: "grainSize") as? Double ?? 1.0,
-            textureSharpness: defaults.object(forKey: "textureSharpness") as? Double ?? 1.0,
-            excludedBundleIdentifiers: Set(defaults.stringArray(forKey: "excludedBundleIdentifiers") ?? [])
-        )
+        let settings = PaperSettings(defaults: .standard)
 
         _settings = StateObject(wrappedValue: settings)
         _controller = StateObject(
@@ -54,13 +45,12 @@ struct PaperScreenApp: App {
 
                 Divider()
                 Label(
-                    controller.enabled ? "Paper Mode On" : "Paper Mode Off",
+                    "\(settings.mode.displayName) \(controller.enabled ? "On" : "Off")",
                     systemImage: controller.enabled
                         ? "checkmark.circle.fill"
                         : "circle"
                 ).padding()
-                
-                
+
                 // Quick info
                 VStack(alignment: .leading, spacing: 6) {
                     Label {
@@ -70,13 +60,38 @@ struct PaperScreenApp: App {
                     }
 
                     Label {
-                        Text(settings.texture.rawValue.capitalized)
+                        Text(settings.texture.displayName)
                     } icon: {
                         Image(systemName: "square.3.layers.3d")
+                    }
+
+                    if settings.mode == .softLight {
+                        Label {
+                            Text("Intensity \(Int(settings.softLightIntensity * 100))%")
+                        } icon: {
+                            Image(systemName: "circle.lefthalf.filled")
+                        }
+
+                        Label {
+                            Text(settings.softLightScene.displayName)
+                        } icon: {
+                            Image(systemName: "sun.max")
+                        }
                     }
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
+
+                Divider()
+
+                Picker("Add-on Mode", selection: $settings.mode) {
+                    ForEach(PaperDisplayMode.allCases) { mode in
+                        Text(mode.displayName)
+                            .tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
 
                 Divider()
 
@@ -113,6 +128,7 @@ struct PaperScreenApp: App {
                 .keyboardShortcut("q")
             }
             .padding(8)
+            .frame(width: 340)
 
         } label: {
             Image("MenuBarIcon")

@@ -2,7 +2,9 @@ import AppKit
 
 final class PaperOverlayWindow: NSWindow {
     private let tintLayer = CALayer()
-    private let noiseLayer = CALayer()
+    private let noiseLayer = NoiseTileLayer()
+    private let effectLayer = ColorEPaperEffectLayer()
+    private var appearanceObservation: NSKeyValueObservation?
 
     init(screen: NSScreen, opacity: CGFloat) {
         super.init(contentRect: screen.frame, styleMask: [.borderless], backing: .buffered, defer: false)
@@ -20,25 +22,61 @@ final class PaperOverlayWindow: NSWindow {
             root.addSublayer(tintLayer)
 
             noiseLayer.frame = root.bounds
+            noiseLayer.contentsScale = screen.backingScaleFactor
+            noiseLayer.needsDisplayOnBoundsChange = true
             noiseLayer.opacity = Float(opacity)
             noiseLayer.compositingFilter = "softLightBlendMode"
             root.addSublayer(noiseLayer)
+
+            effectLayer.frame = root.bounds
+            effectLayer.contentsScale = screen.backingScaleFactor
+            effectLayer.needsDisplayOnBoundsChange = true
+            root.addSublayer(effectLayer)
+        }
+        appearanceObservation = observe(\.effectiveAppearance, options: [.new]) { [weak self] window, _ in
+            self?.effectLayer.updateAppearance(window.effectiveAppearance)
         }
     }
 
     func setTexture(_ image: CGImage?) {
-        noiseLayer.contents = image
+        noiseLayer.tile = image
     }
 
-    func configure(with texture: PaperTexture, opacity: CGFloat) {
-        let settings = texture.settings
-        tintLayer.backgroundColor = settings.tint.withAlphaComponent(0.14).cgColor
-        tintLayer.opacity = Float(settings.opacity)
-        noiseLayer.compositingFilter = settings.blendMode
-        noiseLayer.opacity = Float(opacity)
+    func configure(with settings: PaperSettings) {
+        let texture = settings.texture.settings
+        tintLayer.backgroundColor = texture.tint.withAlphaComponent(0.14).cgColor
+        tintLayer.opacity = Float(texture.opacity)
+        noiseLayer.compositingFilter = texture.blendMode
+        noiseLayer.opacity = Float(settings.opacity)
+
+        switch settings.mode {
+        case .standard:
+            effectLayer.isHidden = true
+        case .colorEPaper:
+            effectLayer.setPaperStyle(settings.colorEPaperStyle, appearance: effectiveAppearance)
+            effectLayer.backgroundColor = nil
+            effectLayer.opacity = 1
+            effectLayer.isHidden = false
+        case .softLight:
+            effectLayer.setPaperStyle(nil, appearance: effectiveAppearance)
+            effectLayer.backgroundColor = settings.softLightScene.tint.cgColor
+            effectLayer.opacity = Float(min(1, max(0, settings.softLightIntensity))) * 0.6
+            effectLayer.isHidden = false
+        }
     }
 
-    func setOpacity(_ value: CGFloat) {
-        noiseLayer.opacity = Float(value)
+}
+
+private final class NoiseTileLayer: CALayer {
+    var tile: CGImage? {
+        didSet { setNeedsDisplay() }
+    }
+
+    override func draw(in context: CGContext) {
+        guard let tile else { return }
+
+        // Keep one texture pixel per point instead of stretching to the display bounds.
+        let tileRect = CGRect(x: 0, y: 0, width: tile.width, height: tile.height)
+        context.draw(tile, in: tileRect, byTiling: true)
     }
 }
