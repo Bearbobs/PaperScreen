@@ -71,7 +71,7 @@ Then launch PaperScreen normally.
  
 1. **Overlay window** — a borderless, transparent window is created per screen at the highest window level.
 2. **Original texture overlay** — Core Image's random noise generator is blurred and level-adjusted for the selected paper type. Its original tint and blend mode remain active in every mode. The texture repeats at a fixed size in macOS points and renders at each display's backing scale, keeping grain size consistent across screen resolutions and Retina/non-Retina displays.
-3. **Color E-paper** — a separate painter applies black dimming, a calibrated paper-color fill, then deterministic transparent fibers or grain using source-over compositing. Its four profiles and texture recipes follow the installed reference app's native defaults (PaperScreen 1.0.1, build 2; native intensity 0.35), including its dark-appearance adjustment. Fibrous papers repeat every 240 macOS points; finer grain papers repeat every 160 points. The [official style guide](https://paperscreen.app/en/help/color-e-paper-styles/) describes their relative character. Device-level pixel identity is not claimed: display color conversion and backing-scale rasterization can differ, and this app intentionally retains the original texture underneath.
+3. **Color E-paper** — a separate painter applies black dimming, a calibrated paper-color fill, then deterministic transparent fibers or grain using source-over compositing.
 4. **Soft Light** — a separate scene-based warm tint over the original texture. Default hides the add-on painter. Switching effects does not regenerate or replace the original texture.
 
 ## Contributing
